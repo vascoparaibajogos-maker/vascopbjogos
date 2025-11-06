@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VASCO PARAÍBA JOGOS</title>
+  <style>
+    :root {
+      --muted: rgba(255,255,255,0.75);
+      --gold: #ffd700;
+      --gold-bright: #ffea00;
+    }
+
+    html,body {
+      height:100%;
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Arial;
+      background:#000;
+      color:#fff;
+    }
+
+    body::before {
+      content:'';
+      position:fixed;
+      inset:0;
+      background-image:url('baixados.jpg');
+      background-size:cover;
+      background-position:center;
+      opacity:0.15;
+      z-index:0;
+      pointer-events:none;
+      filter:contrast(.9) saturate(.6);
+    }
+
+    header {
+      position:relative;
+      z-index:2;
+      padding:28px 16px;
+      text-align:center;
+      background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.15));
+    }
+
+    .logo { width:140px; display:block; margin:0 auto 8px }
+    h1 { margin:0; font-size:2rem; letter-spacing:.04em; text-transform:uppercase }
+    .tagline { color:var(--muted); margin-top:6px; font-size:.95rem }
+
+    .container { max-width:980px; margin:20px auto; padding:16px; position:relative; z-index:2 }
+    .card { background:rgba(17,17,17,.8); border:1px solid #222; border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:0 8px 30px rgba(0,0,0,.6) }
+
+    table { width:100%; border-collapse:collapse }
+    th,td { padding:10px; border-bottom:1px solid rgba(255,255,255,.06); text-align:left }
+    th { color:var(--muted); font-weight:700 }
+
+    tr.next-game {
+      background:rgba(255,215,0,0.25);
+      font-weight:800;
+      border:2px solid var(--gold);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow:0 0 8px var(--gold-bright); }
+      50% { box-shadow:0 0 20px var(--gold); }
+      100% { box-shadow:0 0 8px var(--gold-bright); }
+    }
+
+    .small { color:var(--muted); font-size:.95rem }
+    .rsvp { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start }
+    input[type=text] {
+      width:100%; padding:10px; border-radius:8px;
+      border:1px solid #333; background:#0f0f0f; color:#fff;
+    }
+
+    .btn {
+      padding:10px 14px; border-radius:8px;
+      border:0; cursor:pointer; font-weight:700;
+      transition: all 0.2s ease;
+    }
+    .btn-primary { background:var(--gold); color:#000 }
+    .btn-primary:hover { background:var(--gold-bright); }
+    .btn-outline { background:transparent; border:1px solid #fff; color:#fff }
+    .btn-outline:hover { background:#fff; color:#000 }
+
+    .pix-note { margin-top:10px; background:rgba(255,255,255,.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,.05) }
+    .pix-key { font-weight:900; color:var(--gold); background:rgba(255,215,0,.08); padding:4px 6px; border-radius:6px; display:inline-block }
+    .pix-value { font-weight:900; color:#000; background:linear-gradient(90deg,#fff,#ffd700); padding:4px 8px; border-radius:6px; display:inline-block }
+    footer { text-align:center; color:var(--muted); margin-top:18px; font-size:.9rem }
+    a.link { color:var(--gold); text-decoration:underline }
+
+    @media (max-width:600px){
+      h1{font-size:1.5rem}
+      .rsvp{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="ícone_Mascote_Zap_PNG.png" alt="Logo Torcida Vasco Paraíba" class="logo">
+    <h1>VASCO PARAÍBA JOGOS</h1>
+    <div class="tagline">A distância é apenas um detalhe</div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Próximos jogos</h2>
+      <p class="small">O jogo mais próximo fica <strong>grifado em dourado</strong> automaticamente. Jogos passados são removidos.</p>
+      <table id="fixture" aria-live="polite">
+        <thead><tr><th>Data</th><th>Confronto</th><th>Competição</th><th>Horário</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Confirmação de Presença</h2>
+      <ol class="small">
+        <li>Realize o pagamento via PIX para: <span class="pix-key" id="pixKeyText">louisecrvg@gmail.com</span>.</li>
+        <li>Valor por pessoa: <span class="pix-value">R$ 5,00</span>.</li>
+        <li>Após o pagamento, envie o comprovante via WhatsApp ou formulário.</li>
+      </ol>
+
+      <div class="rsvp">
+        <div style="flex:1">
+          <label for="name">Seu nome</label><br>
+          <input id="name" type="text" placeholder="Digite seu nome" disabled>
+          <div class="pix-note small">Campo liberado após copiar a chave PIX e enviar o comprovante.</div>
+        </div>
+        <div style="min-width:220px">
+          <button id="copyPixBtn" class="btn btn-primary">Copiar chave PIX e pagar</button><br>
+          <button id="sendProofBtn" class="btn btn-outline" style="margin-top:10px">Enviar comprovante (WhatsApp)</button><br>
+          <button id="openFormBtn" class="btn btn-outline" style="margin-top:10px">Abrir formulário</button><br>
+          <button id="confirmBtn" class="btn btn-outline" disabled style="margin-top:10px">Confirmar presença</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Contato</h2>
+      <p><strong>Torcida Vasco Paraíba</strong><br>
+      WhatsApp: (83) 98811-0236<br>
+      Email: <a href="mailto:vascoparaibajogos@gmail.com" class="link">vascoparaibajogos@gmail.com</a><br>
+      Instagram: <a href="https://www.instagram.com/vascoparaiba_/" target="_blank" class="link">@vascoparaiba_</a></p>
+    </section>
+
+    <footer>© 2025 Torcida Vasco Paraíba — "A distância é apenas um detalhe"</footer>
+  </main>
+
+  <script>
+    // Lista de jogos atualizada
+    const fixtures = [
+      {date:"08/11/2025", match:"Vasco x Juventude", comp:"Campeonato Brasileiro", time:"18:00"},
+      {date:"19/11/2025", match:"Grêmio x Vasco", comp:"Campeonato Brasileiro", time:"21:30"},
+      {date:"23/11/2025", match:"Bahia x Vasco", comp:"Campeonato Brasileiro", time:"16:00"},
+      {date:"29/11/2025", match:"Vasco x Internacional", comp:"Campeonato Brasileiro", time:"12:00"},
+      {date:"03/12/2025", match:"Vasco x Mirassol", comp:"Campeonato Brasileiro", time:"A definir"},
+      {date:"07/12/2025", match:"Atlético-MG x Vasco", comp:"Campeonato Brasileiro", time:"A definir"}
+    ];
+
+    function parseDateBR(str) {
+      const [d,m,y] = str.split('/').map(Number);
+      return new Date(y, m-1, d);
+    }
+
+    function renderFixtures() {
+      const tbody = document.querySelector('#fixture tbody');
+      tbody.innerHTML = '';
+      const hoje = new Date();
+      const futuros = fixtures.filter(f => parseDateBR(f.date) >= hoje);
+      futuros.sort((a,b)=>parseDateBR(a.date)-parseDateBR(b.date));
+      const proximo = futuros[0];
+      futuros.forEach(f => {
+        const tr = document.createElement('tr');
+        if(f === proximo) tr.className = 'next-game';
+        tr.innerHTML = `<td>${f.date}</td><td>${f.match}</td><td>${f.comp}</td><td>${f.time}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // PIX: copiar chave e liberar campos
+    const pixKey = document.getElementById('pixKeyText').innerText;
+    const copyBtn = document.getElementById('copyPixBtn');
+    const nameInput = document.getElementById('name');
+    const confirmBtn = document.getElementById('confirmBtn');
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(pixKey);
+        copyBtn.innerText = 'Chave PIX copiada!';
+        nameInput.disabled = false;
+        confirmBtn.disabled = false;
+        setTimeout(()=>copyBtn.innerText='Copiar chave PIX e pagar',2500);
+      } catch(e) {
+        alert('Não foi possível copiar a chave PIX automaticamente.');
+      }
+    });
+
+    // Abrir WhatsApp
+    document.getElementById('sendProofBtn').addEventListener('click', ()=>{
+      window.open('https://api.whatsapp.com/send/?phone=5583988110236&text=Olá,%20vou%20enviar%20o%20comprovante%20do%20PIX%20para%20confirmar%20minha%20presença.&type=phone_number&app_absent=0','_blank');
+    });
+
+    // Abrir formulário
+    document.getElementById('openFormBtn').addEventListener('click', ()=>{
+      window.open('https://docs.google.com/forms/d/e/1FAIpQLScwwPCBqI0J9-CwwCEfq9qIp8w0_wSkdhakI-NpynXOKTC5Zg/viewform','_blank');
+    });
+
+    // Confirmar presença
+    confirmBtn.addEventListener('click', ()=>{
+      if(nameInput.value.trim()!==''){
+        alert(`Presença confirmada: ${nameInput.value}`);
+        confirmBtn.disabled = true;
+        nameInput.disabled = true;
+      } else {
+        alert('Por favor, digite seu nome antes de confirmar.');
+      }
+    });
+
+    renderFixtures();
+  </script>
+</body>
+</html>
